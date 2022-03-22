@@ -5,8 +5,8 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from router.xlsx import router as xlsx_router
-from router.users import router as users_router
+from router_xlsx import router as xlsx_router
+from router_users import router as users_router
 
 app = FastAPI()
 
