@@ -1,5 +1,7 @@
 FROM python:3.9-alpine
 
+
+
 WORKDIR /
 
 # 修改源
@@ -17,6 +19,7 @@ RUN pip install -i https://pypi.douban.com/simple/ -U pip
 RUN pip config set global.index-url https://pypi.douban.com/simple/
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
+ENV PYTHONPATH /code
 WORKDIR /code
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
