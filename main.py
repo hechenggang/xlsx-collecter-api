@@ -3,16 +3,16 @@
 import time,os
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
+# from fastapi.staticfiles import StaticFiles
 
 from router_xlsx import router as xlsx_router
 from router_users import router as users_router
 
 app = FastAPI()
 
-# 挂载静态文件
-static_file_path = os.path.join(os.path.dirname(__file__), "static")
-app.mount("/static", StaticFiles(directory=static_file_path), name="static")
+# # 挂载静态文件
+# static_file_path = os.path.join(os.path.dirname(__file__), "static")
+# app.mount("/static", StaticFiles(directory=static_file_path), name="static")
 # 挂载路由
 app.include_router(xlsx_router, prefix="/api")
 app.include_router(users_router, prefix="/api")
