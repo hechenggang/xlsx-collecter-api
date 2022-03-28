@@ -33,8 +33,8 @@ def code_check(code):
             if (round(timestamp()) - CODE_CACHE[user_id]["ts"]) < 60*60:
                 return 200,[user_id,user_key]
     # 缓存无法使用时，使用账户系统api进行校验
-    status,_ = code_online_check(user_id,user_key,split_string)
+    status,result = code_online_check(user_id,user_key,split_string)
     if status == 200:
         return 200,[user_id,user_key]
     else: 
-        return 500,"在线认证失败"
+        return 500,result
