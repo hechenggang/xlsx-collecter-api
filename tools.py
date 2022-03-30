@@ -4,6 +4,8 @@ import time
 import uuid
 import hashlib
 import json
+import shutil
+
 
 import openpyxl
 from io import BytesIO
@@ -79,6 +81,11 @@ def init_sheet_path_and_id():
     sheet_id = get_uuid_text()
     sheet_path = init_sheet_path(sheet_id)
     return sheet_id,sheet_path
+
+
+def delete_sheet_path_and_files(sheet_id):
+    sheet_path = get_sheet_path(sheet_id)
+    shutil.rmtree(sheet_path)
 
 
 def get_matched_data(data:dict={},template:dict={}):
@@ -157,6 +164,19 @@ def add_sheet_to_user_status(user_id,sheet:list={"index": str, "title": str}):
 
 
 
+def delete_sheet_from_user_status(user_id,sheet_id):
+    user_path = get_user_path(user_id)
+    user_json = os.path.join(user_path, "status.json")
+    
+    if os.path.isfile(user_json):
+        with open(user_json, "rt", encoding="utf-8")as t:
+            data = json.loads(t.read())
+            del data["sheets"][sheet_id]
+            with open(user_json, "wt", encoding="utf-8")as t2:
+                t2.write(json.dumps(data))
+
+
+
 def get_sheets_from_user_status(user_id):
     user_path = get_user_path(user_id)
     user_json = os.path.join(user_path, "status.json")
@@ -166,7 +186,7 @@ def get_sheets_from_user_status(user_id):
             data = json.loads(t.read())
             return 200,data["sheets"]
     else:
-        return 404,"用户状态文件不存在"
+        return 200,[]
     
     
 

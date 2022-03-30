@@ -130,7 +130,27 @@ def delete_row(db_path: str = "form_id", subuser_id: str = "", row_id:int=0):
         conn.close()
 
 
-def get_subuser_rows(db_path: str = "form_id", subuser_id: str = "" ,offset=0, limit=10):
+def delete_rows(db_path: str = "form_id", subuser_id: str = "", row_ids:list=[0,]):
+    if not os.path.isfile(db_path):
+        return 404, "数据库不存在"
+    rows_string = ",".join(row_ids)
+    db_string = "DELETE FROM sheet WHERE rowid in ({}) AND update_by = ?".format(rows_string)
+    conn = sqlite3.connect(db_path)
+    cs = conn.cursor()
+
+    try:
+        debug(db_string,subuser_id)
+        cs.execute(db_string,[subuser_id,])
+        return 200, ""
+    except Exception as e:
+        return 500, str(e)
+    finally:
+        cs.close()
+        conn.commit()
+        conn.close()
+
+
+def get_subuser_rows(db_path: str = "form_id", subuser_id: str = "" ,offset=0, limit=10000):
     if not os.path.isfile(db_path):
         return 404, "数据库不存在"
 
@@ -163,6 +183,28 @@ def get_row_by_rowid(db_path: str = "form_id", row_id=0):
     try:
         debug(db_string)
         c = cs.execute(db_string)
+        return 200, c.fetchall()
+    except Exception as e:
+        return 500, str(e)
+    finally:
+        cs.close()
+        conn.commit()
+        conn.close()
+
+
+def get_rows_by_rowids(db_path: str = "form_id", subuser_id: str = "", row_ids:list=[0]):
+    if not os.path.isfile(db_path):
+        return 404, "数据库不存在"
+
+    rows_string = ",".join(row_ids)
+    db_string = "SELECT rowid,* FROM sheet WHERE rowid in ({}) AND update_by = ?".format(rows_string)
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    cs = conn.cursor()
+
+    try:
+        debug(db_string)
+        c = cs.execute(db_string,[subuser_id,])
         return 200, c.fetchall()
     except Exception as e:
         return 500, str(e)
